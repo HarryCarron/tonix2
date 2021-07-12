@@ -1,0 +1,56 @@
+.settings-rack-container {
+  background-color:#303545;
+  height: 170px;
+  margin: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: 0.5s;
+}
+
+
+.settingsHolder{
+  transition: 0.5s;
+}
+
+.menuItem{
+  padding:6px;
+  background-color: #343538;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.selected{
+  font-weight: bold;
+  color: #8b9ef3;
+}
+
+
+.menuItem-Right{
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.menuItem-Left{
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+.settingsRack{
+  height: 80%;
+}
+
+.setting-container {
+  border-radius: 10px;
+  margin: 10px;
+  margin-top: 0;
+  background-color: #1D2123;
+}
+
+.menu-container {
+  height: 20%;
+}
+
+.settingsRackButton{
+  width: 60px;
+  cursor: pointer;
+}

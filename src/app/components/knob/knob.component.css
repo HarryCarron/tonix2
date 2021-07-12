@@ -1,0 +1,80 @@
+.knobContainer {
+  width: 40px;
+  border-radius: 50%;
+}
+
+.knob{
+  width: 100%;
+  height:100%;
+  border-radius:50%;
+  background-color: rgb(49, 49, 49);
+  display:flex;
+  flex-direction: column;
+}
+
+.knob-top {
+  height:30%;
+  /* padding-top: 2px; */
+}
+
+.knob-value {
+  font-size: 0.8em;
+  width: 20px;
+  text-align: center;
+  color: #e2e2e2;
+  font-weight: 800;
+}
+
+.knob-disconnected {
+  opacity: 0.4;
+}
+
+.knob-value-container {
+  margin-top: 4px;
+}
+
+.grabbable {
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+/* (Optional) Apply a "closed-hand" cursor during drag operation. */
+.grabbable:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.knob-outer-outline{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  /* border-bottom: 3px solid rgba(0, 0, 0, 0.349); */
+  border-radius:50%;
+}
+
+.centerKnob {
+  transform-origin: center;
+  transform-box: fill-box
+}
+
+.knob-bottom {
+  height:70%
+}
+
+.point{
+  height:100%;
+  width:2px;
+  background-color:white;
+  border-radius: 3px;
+}
+
+.knob-outline{
+  box-sizing: border-box;
+  width: 100%;
+  height:100%;
+  border: 2px solid #474a4a;
+  border-radius:50%;
+}

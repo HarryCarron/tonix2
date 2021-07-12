@@ -1,0 +1,19 @@
+
+<div class='h-100 w-100 d-flex flex-column center-child-xy'>
+  <div class='flex-grow-1'>
+      <div>
+        <div class='synth'>
+            <div class='content-wrapper d-flex f-col'>
+                <div class='osc-rack h-100'>
+                    <ng-container *ngFor='let oscillator of oscillators'>
+                        <app-oscillator [data]="oscillator"></app-oscillator>
+                    </ng-container>
+                </div>
+                <app-settings-rack></app-settings-rack>
+            </div>
+        </div>
+      </div>
+  </div>
+
+</div>
+

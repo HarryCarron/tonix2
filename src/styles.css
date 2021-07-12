@@ -1,0 +1,134 @@
+
+body, html {
+    height: 100vh !important;
+    width:100%;
+    margin: 0 !important;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+}
+
+.center-child-xy {
+    display: flex;           /* establish flex container */
+    justify-content: center; /* center items vertically, in this case */
+    align-items: center;     /* center items horizontally, in this case */
+
+}
+.center-child-x {
+    display: flex;           /* establish flex container */
+    justify-content: center;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.input[type=number]{
+    background-color:#252c33;
+    border:none;
+    color: white;
+    text-align:center;
+    padding:5px;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.f-row {
+  flex-direction: row;
+}
+
+.f-col {
+  flex-direction: column;
+}
+
+
+.h-100 {
+    height:100% !important;
+}
+
+.w-100 {
+    width:100% !important;
+}
+
+.shadow-1{
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+}
+
+.shadow-2{
+	-webkit-box-shadow: 0 10px 6px -6px #777;
+	-moz-box-shadow: 0 10px 6px -6px #777;
+	box-shadow: 0 10px 6px -6px #777;
+}
+
+
+.app-standardText {
+    font-size: 1.3em;
+}
+
+.control {
+  background-color: #252c33;
+  border: none;
+  color: white ;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;       /* Remove default arrow */
+    text-align: center;
+    padding: 5px;
+    margin: 0 2px;
+    border-radius: 4px;
+    width: 100%;
+ }
+
+* {
+    color: white;
+    font-size: 10px;
+}
+
+.label {
+  font-size: 1.1em;
+  font-weight: 800;
+  color: white;
+}
+
+ .controlshadow-1 {
+    box-shadow: 0px 3px 4px rgba(0,0,0,0.5);
+}
+
+.controlshadow-2 {
+    box-shadow: 0px 3px 9px rgba(0,0,0,0.5);
+}
+
+.controlshadow-3 {
+    box-shadow: inset 0px 3px 2px rgba(0,0,0,0.2);
+}
+
+.controlshadow-4 {
+    box-shadow: 0px 3px 2px rgba(0,0,0,0.2);
+}
+
+.controlshadow-5 {
+    box-shadow: inset -2px 3px 2px rgba(0,0,0,0.2);
+}
+
+.control-label {
+  color: #90979c
+}
+
+.dark-2 {
+  background-color: #252c33;
+}
+
+.dark-1 {
+  background-color: #303841
+}
