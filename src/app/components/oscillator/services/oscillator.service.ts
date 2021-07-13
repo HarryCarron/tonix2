@@ -9,7 +9,7 @@ export class OscillatorService {
 
   constructor() { }
 
-  readonly connectedState$ = new BehaviorSubject({});
+  readonly connectedState$ = new BehaviorSubject(false);
 
   toggleOscillator(state: boolean): void {
     this.connectedState$.next(state);

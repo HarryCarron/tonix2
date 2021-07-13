@@ -1,5 +1,119 @@
-<div #envelopeContainer>
-  <svg #svgContainer>
+<div class="w-100 h-100" #envelopeContainer>
+  <svg #svgContainer >
+
+      <g *ngFor="let secondDurationLabel of secondDurationLabels; let i = index;">
+        <line
+          [attr.x1]="PAD + (secondWidth * i)"
+          [attr.y1]="PAD"
+          [attr.x2]="PAD + (secondWidth * i)"
+          [attr.y2]="availableHeight - (PAD + 10)"
+          stroke-dasharray="5, 4"
+          stroke="#A9A9A9"
+        />
+        <text [attr.x]="PAD + (secondWidth * i) - 3" style="fill: #A9A9A9" [attr.y]="availableHeight - (PAD + 10) + 15">
+          {{
+            secondDurationLabel
+          }}
+        </text>
+      </g>
+
+
+      <!-- attack -->
+      <circle
+        #attackHandle
+        [attr.cx]="PAD"
+        [attr.cy]="availableHeight - (PAD + 10)"
+        r="4"
+        stroke="#fffd47"
+        stroke-width="3"
+        fill-opacity="0"
+        class="handle"
+      />
+      <line
+        #attackLine
+        [attr.x1]="PAD"
+        [attr.y1]="availableHeight - (PAD + 10)"
+        [attr.x2]="secondWidth + PAD"
+        [attr.y2]="PAD"
+        stroke-linecap="round"
+        stroke-width="3"
+        stroke="white"
+    />
+      <!-- decay -->
+      <circle
+        #decayHandle
+        [attr.cx]="secondWidth + PAD"
+        [attr.cy]="PAD"
+        r="4"
+        stroke="#fffd47"
+        stroke-width="3"
+        fill-opacity="0"
+        class="handle"
+      />
+      <line
+        #attackLine
+        [attr.x1]="secondWidth + PAD"
+        [attr.y1]="PAD"
+        [attr.x2]="(secondWidth * 2) + PAD"
+        [attr.y2]="PAD + 30"
+        stroke-linecap="round"
+        stroke-width="3"
+        stroke="white"
+      />
+      <!-- sustain -->
+      <circle
+        #sustainHandle
+        [attr.cx]="(secondWidth * 2) + PAD"
+        [attr.cy]="PAD + 30"
+        r="4"
+        stroke="#fffd47"
+        stroke-width="3"
+        fill-opacity="0"
+        class="handle"
+      />
+
+      <line
+        #attackLine
+        [attr.x1]="(secondWidth * 2) + PAD"
+        [attr.y1]="PAD + 30"
+        [attr.x2]="(secondWidth * 3) + PAD"
+        [attr.y2]="PAD + 30"
+        stroke-linecap="round"
+        stroke-width="3"
+        stroke="white"
+      />
+      <!-- release -->
+      <circle
+        #releaseHandle
+        [attr.cx]="(secondWidth * 3) + PAD"
+        [attr.cy]="PAD + 30"
+        r="4"
+        stroke="#fffd47"
+        stroke-width="3"
+        fill-opacity="0"
+        class="handle"
+      />
+
+      <line
+        #attackLine
+        [attr.x1]="(secondWidth * 3) + PAD"
+        [attr.y1]="PAD + 30"
+        [attr.x2]="(secondWidth * 4) + PAD"
+        [attr.y2]="availableHeight - (PAD + 10)"
+        stroke-linecap="round"
+        stroke-width="3"
+        stroke="white"
+      />
+      <circle
+        #endHandle
+        [attr.cx]="(secondWidth * 4) + PAD"
+        [attr.cy]="availableHeight - (PAD + 10)"
+        r="4"
+        stroke="#fffd47"
+        stroke-width="3"
+        fill-opacity="0"
+        class="handle"
+      />
 
   </svg>
 </div>

@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, Input } from '@angular/core';
 import { CoOrds } from '../../app.objects';
-import { OscillatorService } from '../../components/oscillator/oscillator.service';
+import { OscillatorService } from '../../components/oscillator/services/oscillator.service';
 
 type degree = number;
 

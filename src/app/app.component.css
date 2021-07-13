@@ -60,7 +60,7 @@
 .osc-rack{
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: 430px;
   overflow-y: scroll;
   -ms-overflow-style: none;
 }

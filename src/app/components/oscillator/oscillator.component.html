@@ -1,6 +1,13 @@
-<!-- [ngClass]="data?.isLastOsc ? 'osc-container-margin-last' : 'osc-container-margin'" -->
 
-<div class="osc-container">
+<div
+  class="osc-container"
+  [ngClass]="{
+    'osc-selected' : (oscillatorGlobalService.selectedOsc$ | async)  === data?.number,
+    'osc-hide' : (oscillatorGlobalService.selectedOsc$ | async)  !== data?.number,
+    'osc-disconnected' : !(oscillatorService.connectedState$ | async)
+  }"
+  (click)="selectOscillator(data!.number)"
+>
   <div>
     <div class="d-flex osc-label-heading">
       <div style="width: 10%" class="center-child-xy h-100">

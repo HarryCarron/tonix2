@@ -18,14 +18,14 @@ export class AppComponent {
     {
       number: 2,
       wavetype: Wavetype.sine,
-      connected: true,
+      connected: false,
       isLastOsc: false,
       detune: 0
     },
     {
       number: 3,
       wavetype: Wavetype.sine,
-      connected: true,
+      connected: false,
       isLastOsc: true,
       detune: 0
     },

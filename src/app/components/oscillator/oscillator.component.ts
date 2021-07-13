@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { WAVETYPES, OscillatorData } from '../../app.objects';
-import { OscillatorService } from '../oscillator/oscillator.service';
+import { OscillatorService } from '../oscillator/services/oscillator.service';
+import { OscillatorGlobalService } from '../oscillator/services/oscillator-global.service';
 
 
 @Component({
@@ -11,12 +12,19 @@ import { OscillatorService } from '../oscillator/oscillator.service';
 })
 export class OscillatorComponent implements OnInit {
 
-  constructor(public oscillatorService: OscillatorService) {
+  constructor(
+      public oscillatorService: OscillatorService,
+      public oscillatorGlobalService: OscillatorGlobalService
+    ) {
   }
 
   @Input() data: OscillatorData | undefined;
 
   readonly wavetypes = WAVETYPES;
+
+  selectOscillator(oscNumber: number ): void {
+    this.oscillatorGlobalService.selectedOsc$.next(oscNumber as number);
+  }
 
 
   ngOnInit(): void {

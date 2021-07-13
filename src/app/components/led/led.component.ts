@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { OscillatorService } from '../../components/oscillator/oscillator.service';
+import { OscillatorService } from '../../components/oscillator/services/oscillator.service';
 import { LogService } from '../../logService/log.service';
 
 @Component({
