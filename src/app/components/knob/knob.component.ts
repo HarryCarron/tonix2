@@ -1,5 +1,5 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, Input } from '@angular/core';
-import { CoOrds } from '../../app.objects';
+import { Component, ViewChild, ElementRef, AfterViewInit, Input, OnChanges } from '@angular/core';
+import { CoOrds, OscillatorData } from '../../app.objects';
 import { OscillatorService } from '../../components/oscillator/services/oscillator.service';
 
 type degree = number;
@@ -22,7 +22,7 @@ interface KnobMetrics {
   templateUrl: './knob.component.html',
   styleUrls: ['./knob.component.css'],
 })
-export class KnobComponent implements AfterViewInit, AfterViewInit {
+export class KnobComponent implements AfterViewInit, OnChanges {
   private mouseDownAt = 0;
   private mouseDroppedAt = 0;
   private yTopLimit = 0;
@@ -30,9 +30,7 @@ export class KnobComponent implements AfterViewInit, AfterViewInit {
 
   private outputCache = 0;
 
-  @Input() oscNumber: number | undefined;
-
-  @Input() connected = false;
+  @Input() oscillator: OscillatorData | undefined;
 
   readonly inputRange = 100;
 
@@ -79,14 +77,14 @@ export class KnobComponent implements AfterViewInit, AfterViewInit {
 
   private startKnob = 0.7 * Math.PI;
 
-  ngOnInit() {
-    this.oscillatorService.connectedState$.subscribe(state => {
-      if (state) {
+  ngOnChanges(): void {
+    if (this.oscillator) {
+      if (this.oscillator.connected) {
         this.output = this.outputCache;
       } else {
         this.output = DISCONNECTED_PLACEHOLDER;
       }
-    });
+    }
   }
 
   private setRotation(amm: number): void {

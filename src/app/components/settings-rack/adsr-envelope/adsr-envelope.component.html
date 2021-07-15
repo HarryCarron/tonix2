@@ -20,6 +20,7 @@
 
       <!-- attack -->
       <circle
+        *ngIf="isEditable"
         #attackHandle
         [attr.cx]="PAD"
         [attr.cy]="availableHeight - (PAD + 10)"
@@ -33,16 +34,18 @@
         #attackLine
         [attr.x1]="PAD"
         [attr.y1]="availableHeight - (PAD + 10)"
-        [attr.x2]="secondWidth + PAD"
+        [attr.x2]="attackPoint + PAD"
         [attr.y2]="PAD"
         stroke-linecap="round"
         stroke-width="3"
-        stroke="white"
+        [attr.stroke]="lineColour"
     />
+      <!-- attack end -->
       <!-- decay -->
       <circle
+        *ngIf="isEditable"
         #decayHandle
-        [attr.cx]="secondWidth + PAD"
+        [attr.cx]="attackPoint + PAD"
         [attr.cy]="PAD"
         r="4"
         stroke="#fffd47"
@@ -52,16 +55,18 @@
       />
       <line
         #attackLine
-        [attr.x1]="secondWidth + PAD"
+        [attr.x1]="attackPoint + PAD"
         [attr.y1]="PAD"
         [attr.x2]="(secondWidth * 2) + PAD"
         [attr.y2]="PAD + 30"
         stroke-linecap="round"
         stroke-width="3"
-        stroke="white"
+        [attr.stroke]="lineColour"
       />
+      <!-- decay end -->
       <!-- sustain -->
       <circle
+        *ngIf="isEditable"
         #sustainHandle
         [attr.cx]="(secondWidth * 2) + PAD"
         [attr.cy]="PAD + 30"
@@ -80,10 +85,11 @@
         [attr.y2]="PAD + 30"
         stroke-linecap="round"
         stroke-width="3"
-        stroke="white"
+        [attr.stroke]="lineColour"
       />
       <!-- release -->
       <circle
+        *ngIf="isEditable"
         #releaseHandle
         [attr.cx]="(secondWidth * 3) + PAD"
         [attr.cy]="PAD + 30"
@@ -102,9 +108,10 @@
         [attr.y2]="availableHeight - (PAD + 10)"
         stroke-linecap="round"
         stroke-width="3"
-        stroke="white"
+        [attr.stroke]="lineColour"
       />
       <circle
+        *ngIf="isEditable"
         #endHandle
         [attr.cx]="(secondWidth * 4) + PAD"
         [attr.cy]="availableHeight - (PAD + 10)"

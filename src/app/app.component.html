@@ -6,7 +6,7 @@
             <div class='content-wrapper d-flex f-col'>
                 <div class='osc-rack h-100'>
                     <ng-container *ngFor='let oscillator of oscillators'>
-                        <app-oscillator [data]="oscillator"></app-oscillator>
+                        <app-oscillator [oscillator]="oscillator"></app-oscillator>
                     </ng-container>
                 </div>
                 <app-settings-rack></app-settings-rack>
@@ -14,6 +14,4 @@
         </div>
       </div>
   </div>
-
 </div>
-

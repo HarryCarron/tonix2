@@ -11,13 +11,13 @@
 
           <g id="front" #top class='centerKnob grabbable' (mousedown)='initiateDrag($event);'>
               <circle cx="81.65" cy="81.65" r="52.47" style="fill:#303841" stroke-width='6'/>
-              <rect *ngIf="oscillatorService.connectedState$ | async" x="77.08" y="102.2" width="9.15" stroke="#fffd47" stroke-width="10" height="30.06" rx="4.5" style="fill:#fffd47"/>
+              <rect *ngIf="oscillator!.connected" x="77.08" y="102.2" width="9.15" stroke="#fffd47" stroke-width="10" height="30.06" rx="4.5" style="fill:#fffd47"/>
           </g>
       </svg>
   </div>
 
   <div class='center-child-x knob-value-container'>
-    <input class='control knob-value' [ngClass]="{ 'knob-disconnected' : connected }" [(ngModel)]="output" type='text' readonly/>
+    <input class='control knob-value' [ngClass]="{ 'knob-disconnected' : !oscillator!.connected }" [(ngModel)]="output" type='text' readonly/>
   </div>
 </div>
 

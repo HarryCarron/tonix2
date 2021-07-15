@@ -1,5 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { timer } from 'rxjs';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { OscillatorGlobalService } from './../../oscillator/services/oscillator-global.service';
+import { Oscillator } from './../../../app.component';
+import { animationFrameScheduler, of, scheduled, timer } from 'rxjs';
+import { repeat, takeUntil } from 'rxjs/operators';
+
+const CONNECTED_KEY = 'connected';
+const AMP_KEY = 'amp';
 
 @Component({
   selector: 'app-adsr-envelope',
@@ -7,8 +13,20 @@ import { timer } from 'rxjs';
   styleUrls: ['./adsr-envelope.component.css']
 })
 export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
+  animationRunning: any;
+  currentAnimation$: any;
 
-  constructor() { }
+
+  constructor(private oscillatorGlobalService: OscillatorGlobalService) { }
+
+  @Input() activeOscillator: Oscillator | undefined;
+
+  get lineColour(): string {
+    return this.isEditable ? 'white' : 'gray';
+  }
+  travelUnit: number | undefined;
+  renderingWidth = 0;
+  isEditable = false;
 
   private envelopeContainer: any;
   private svgContainer: any;
@@ -16,14 +34,22 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   availableHeight = 0;
   availableWidth = 0;
 
+  attackPoint = 130;
+  decayPoint = 0;
+  sustainPoint = 0;
+  releasePoint = 0;
 
-  readonly PAD = 30;
+
+  readonly PAD = 40;
 
   secondDurationLabels = [0, 1, 2, 3, 4];
 
   secondWidth = 0;
 
   ngOnInit(): void {
+    this.oscillatorGlobalService.selectedOsc$.subscribe(
+      activeOscillator => activeOscillator && this.initEnvelope(activeOscillator as Oscillator)
+    );
   }
 
   ngAfterViewInit(): void {
@@ -33,10 +59,57 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
       this.svgContainer.style.width = this.availableWidth;
       this.svgContainer.style.height = this.availableHeight;
 
-      this.secondWidth = ((this.availableWidth - this.PAD * 2) / 4);
+      this.renderingWidth  = (this.availableWidth - this.PAD * 2);
+      this.travelUnit  = this.renderingWidth / 100;
+      this.secondWidth = (this.renderingWidth / 4);
     });
 
   }
+
+  private initEnvelope(oscillator: Oscillator): void {
+    this.isEditable = oscillator.getValue(CONNECTED_KEY);
+    const amp = oscillator.getValue(AMP_KEY);
+
+    this.setAmpValue(
+      (Object.values(amp) as number[]).map((v: number) => (v * 10) * (this.travelUnit as number)),
+      true
+    );
+    oscillator.valueChange.subscribe(
+        (newConnectedState: any) => {
+          if (CONNECTED_KEY in newConnectedState) {
+            this.isEditable = (newConnectedState.connected as boolean);
+          }
+        }
+      );
+  }
+  private setAmpValue(ampValues: number[], animate: boolean): void {
+    this.attackPoint = ampValues[0];
+    this.decayPoint = ampValues[1];
+    this.releasePoint = ampValues[2];
+    this.sustainPoint = ampValues[3];
+  }
+
+  // private animate(): void {
+
+  //   if (this.animationRunning) {
+  //     this.currentAnimation$.next();
+  //   }
+
+  //   this.animationRunning = true;
+  //   let count = -1;
+  //   scheduled(of(0), animationFrameScheduler)
+  //   .pipe(repeat(), takeUntil(this.currentAnimation$))
+  //   .subscribe(x => {
+  //     count ++;
+
+
+  //     if (count === time) {
+  //       this.animationRunning = false;
+  //       this.currentAnimation$.next();
+  //     }
+  //   });
+  // };
+
 
   @ViewChild('envelopeContainer') set envelopeContainerElem(e: any) {
     this.envelopeContainer = e.nativeElement;
@@ -47,3 +120,4 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   }
 
 }
+

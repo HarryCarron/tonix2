@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { OscillatorService } from '../../components/oscillator/services/oscillator.service';
-import { LogService } from '../../logService/log.service';
+import { OscillatorGlobalService } from '../../components/oscillator/services/oscillator-global.service';
+import { OscillatorData } from 'src/app/app.objects';
+import { Oscillator } from 'src/app/app.component';
 
 @Component({
   selector: 'app-led',
@@ -9,13 +11,22 @@ import { LogService } from '../../logService/log.service';
 })
 export class LedComponent {
 
-  constructor(public oscillatorService: OscillatorService) { }
+  constructor(
+    public oscillatorService: OscillatorService,
+    public oscillatorGlobalService: OscillatorGlobalService
+    ) { }
 
-  @Input() oscNumber: number | undefined;
+  @Input() oscillator: Oscillator | undefined;
 
   toggle(): void {
-    const currentState = this.oscillatorService.connectedState$.getValue();
-    this.oscillatorService.toggleOscillator(!currentState);
+    const newConnectedState = !(this.oscillator as Oscillator).getValue('connected');
+    (this.oscillator as Oscillator).setValue(
+      {
+        key: 'connected',
+        value: newConnectedState,
+        emitEvent: true
+      }
+      );
   }
 
 }

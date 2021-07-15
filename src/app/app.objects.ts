@@ -1,7 +1,16 @@
+import { AppModule } from "./app.module";
+
 export enum Wavetype {
   sine,
   saw,
   square
+}
+
+export interface Amp {
+  attack: number;
+  decay: number;
+  sustain: number;
+  release: number;
 }
 
 export const WAVETYPES = [
@@ -20,11 +29,11 @@ export const WAVETYPES = [
 ];
 
 export interface OscillatorData {
-  isLastOsc: boolean;
   number: number;
   wavetype: Wavetype;
   connected: boolean;
   detune: number;
+  amp: Amp;
 }
 
 export interface CoOrds {

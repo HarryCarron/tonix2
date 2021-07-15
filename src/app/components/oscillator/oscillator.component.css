@@ -49,8 +49,11 @@
 
 .osc-selected {
   /* background-color: #4862c3 !important; */
-  background: rgb(72,98,195);
-  background: linear-gradient(90deg, rgba(72,98,195,1) 52%, rgba(116,136,214,1) 100%);
+  /* background: rgb(72,98,195);
+  background: linear-gradient(90deg, rgba(72,98,195,1) 52%, rgba(116,136,214,1) 100%); */
+  /* background-color: #7d48c3 !important; */
+  background: rgb(125,72,195);
+  background: linear-gradient(104deg, rgba(125,72,195,1) 0%, rgba(72,84,129,1) 100%);
 }
 
 .osc-container{
@@ -67,7 +70,7 @@
 }
 
 .osc-hide {
-  transform: scale(0.95);
+  /* // transform: scale(0.95); */
 }
 
 .osc-container-margin{

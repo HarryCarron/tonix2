@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { OscillatorData } from 'src/app/app.objects';
 
 enum settingsRackMenuItem {
   overview,
@@ -16,7 +17,7 @@ export class SettingsRackComponent {
 
   constructor() { }
 
-  @Input() data: any;
+  @Input() activeOscillator: OscillatorData | undefined;
 
   selectedMenuItem = 1;
 

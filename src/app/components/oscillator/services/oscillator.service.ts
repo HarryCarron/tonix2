@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { OscillatorData } from 'src/app/app.objects';
+import { Oscillator } from './../../../app.component';
 
 
 @Injectable({
@@ -9,9 +11,13 @@ export class OscillatorService {
 
   constructor() { }
 
-  readonly connectedState$ = new BehaviorSubject(false);
+  get activeOscNumber$(): Observable<Oscillator> {
+    return this.currentlySelectedOscillator$ as Observable<Oscillator>;
+  }
 
-  toggleOscillator(state: boolean): void {
-    this.connectedState$.next(state);
+  readonly currentlySelectedOscillator$ = new BehaviorSubject<Oscillator | null>(null);
+
+  setSelectedOscillator(oscillator: Oscillator): void {
+    this.currentlySelectedOscillator$.next(oscillator);
   }
 }

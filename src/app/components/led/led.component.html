@@ -1,5 +1,5 @@
 <div class='container center-child-xy'>
-  <div (click)="toggle()" class='led centerChild' [ngClass]="{'on' : oscillatorService.connectedState$ | async}">
+  <div (click)="toggle()" class='led centerChild' [ngClass]="{'on' : oscillator!.getValue('connected')}">
       <div class='white'></div>
   </div>
 </div>

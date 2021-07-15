@@ -2,6 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { WAVETYPES, OscillatorData } from '../../app.objects';
 import { OscillatorService } from '../oscillator/services/oscillator.service';
 import { OscillatorGlobalService } from '../oscillator/services/oscillator-global.service';
+import { Oscillator } from './../../app.component';
+import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -18,20 +21,18 @@ export class OscillatorComponent implements OnInit {
     ) {
   }
 
-  @Input() data: OscillatorData | undefined;
+  get selectedOsc$(): Observable<Oscillator> {
+    return this.oscillatorService.currentlySelectedOscillator$ as Observable<Oscillator>;
+  }
+
+  @Input() oscillator: OscillatorData | undefined;
 
   readonly wavetypes = WAVETYPES;
 
-  selectOscillator(oscNumber: number ): void {
-    this.oscillatorGlobalService.selectedOsc$.next(oscNumber as number);
+  selectOscillator(oscillator: Oscillator ): void {
+    this.oscillatorGlobalService.setActiveOscillator(oscillator);
   }
 
-
-  ngOnInit(): void {
-    const data = this.data as OscillatorData;
-    const connected = data.connected;
-
-    this.oscillatorService.toggleOscillator(connected);
-  }
+  ngOnInit(): void {}
 
 }
