@@ -1,4 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, Input, OnChanges } from '@angular/core';
+import { Oscillator } from 'src/app/app.component';
 import { CoOrds, OscillatorData } from '../../app.objects';
 import { OscillatorService } from '../../components/oscillator/services/oscillator.service';
 
@@ -30,7 +31,7 @@ export class KnobComponent implements AfterViewInit, OnChanges {
 
   private outputCache = 0;
 
-  @Input() oscillator: OscillatorData | undefined;
+  @Input() oscillator: Oscillator | undefined;
 
   readonly inputRange = 100;
 

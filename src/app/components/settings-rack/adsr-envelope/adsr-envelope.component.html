@@ -34,18 +34,18 @@
         #attackLine
         [attr.x1]="PAD"
         [attr.y1]="availableHeight - (PAD + 10)"
-        [attr.x2]="attackPoint + PAD"
+        [attr.x2]="points[0] + PAD"
         [attr.y2]="PAD"
         stroke-linecap="round"
         stroke-width="3"
         [attr.stroke]="lineColour"
-    />
+      />
       <!-- attack end -->
       <!-- decay -->
       <circle
         *ngIf="isEditable"
         #decayHandle
-        [attr.cx]="attackPoint + PAD"
+        [attr.cx]="points[0] + PAD"
         [attr.cy]="PAD"
         r="4"
         stroke="#fffd47"
@@ -55,9 +55,9 @@
       />
       <line
         #attackLine
-        [attr.x1]="attackPoint + PAD"
+        [attr.x1]="points[0] + PAD"
         [attr.y1]="PAD"
-        [attr.x2]="(secondWidth * 2) + PAD"
+        [attr.x2]="points[1] + PAD"
         [attr.y2]="PAD + 30"
         stroke-linecap="round"
         stroke-width="3"
@@ -68,7 +68,7 @@
       <circle
         *ngIf="isEditable"
         #sustainHandle
-        [attr.cx]="(secondWidth * 2) + PAD"
+        [attr.cx]="points[1] + PAD"
         [attr.cy]="PAD + 30"
         r="4"
         stroke="#fffd47"
@@ -79,9 +79,9 @@
 
       <line
         #attackLine
-        [attr.x1]="(secondWidth * 2) + PAD"
+        [attr.x1]="points[1] + PAD"
         [attr.y1]="PAD + 30"
-        [attr.x2]="(secondWidth * 3) + PAD"
+        [attr.x2]="points[2]  + PAD"
         [attr.y2]="PAD + 30"
         stroke-linecap="round"
         stroke-width="3"
@@ -91,7 +91,7 @@
       <circle
         *ngIf="isEditable"
         #releaseHandle
-        [attr.cx]="(secondWidth * 3) + PAD"
+        [attr.cx]="points[2] + PAD"
         [attr.cy]="PAD + 30"
         r="4"
         stroke="#fffd47"
@@ -102,9 +102,9 @@
 
       <line
         #attackLine
-        [attr.x1]="(secondWidth * 3) + PAD"
+        [attr.x1]="points[2] + PAD"
         [attr.y1]="PAD + 30"
-        [attr.x2]="(secondWidth * 4) + PAD"
+        [attr.x2]="points[3] + PAD"
         [attr.y2]="availableHeight - (PAD + 10)"
         stroke-linecap="round"
         stroke-width="3"
@@ -113,7 +113,7 @@
       <circle
         *ngIf="isEditable"
         #endHandle
-        [attr.cx]="(secondWidth * 4) + PAD"
+        [attr.cx]="points[3] + PAD"
         [attr.cy]="availableHeight - (PAD + 10)"
         r="4"
         stroke="#fffd47"

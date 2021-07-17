@@ -25,7 +25,7 @@ export class OscillatorComponent implements OnInit {
     return this.oscillatorService.currentlySelectedOscillator$ as Observable<Oscillator>;
   }
 
-  @Input() oscillator: OscillatorData | undefined;
+  @Input() oscillator: Oscillator | undefined;
 
   readonly wavetypes = WAVETYPES;
 

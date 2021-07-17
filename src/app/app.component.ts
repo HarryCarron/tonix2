@@ -17,7 +17,11 @@ export class AppComponent implements OnInit {
 
   oscillators: Oscillator[] | undefined;
 
+
+
   ngOnInit(): void {
+
+    const r = () => Math.floor(Math.random() * 10) / 10;
 
     this.oscillators = [1, 2, 3].map((oscNumber: number) =>
       new Oscillator(
@@ -27,31 +31,45 @@ export class AppComponent implements OnInit {
           connected: oscNumber === 1,
           detune: 0,
           amp: {
-            attack: (Math.floor(Math.random() * 4) + 1) / 10,
-            // attack: 1,
-            decay: 0.2,
-            sustain: 1.0,
-            release: 0.8
+            attack: r(),
+            decay: r(),
+            sustain: 1,
+            release: r()
           },
         }
       )
     );
 
-    timer(300).subscribe(() => this.oscillatorGlobalService.setActiveOscillator(this.oscillators[0] as Oscillator));
+    timer(1000).subscribe(() => this.oscillatorGlobalService.setActiveOscillator((this.oscillators as Oscillator[])[0]));
 
   }
 
 }
 
 
-/**
- * todo: make base
- */
-export class Oscillator {
-  valueChange = new Subject();
-  oscillatorChange = new Subject();
+class ChangeEmit {
+
+  readonly valueChange = new Subject();
+
+  public setValue(update: {key: string, value: any, emitEvent: boolean}): void {
+    (this as any)[update.key] = update.value;
+    if (!update.emitEvent) {
+      return;
+    }
+    this.valueChange.next(
+      { [update.key]: update.value }
+    );
+  }
+
+  public getValue(key: string): any {
+    return (this as any)[key];
+  }
+}
+
+export class Oscillator extends ChangeEmit {
 
   constructor(data: OscillatorData) {
+    super();
     this.number = data?.number;
     this.wavetype = data?.wavetype;
     this.connected = data.connected;
@@ -59,23 +77,10 @@ export class Oscillator {
     this.amp = data.amp;
   }
 
-    private number: number | undefined;
-    private wavetype: Wavetype | undefined;
-    private connected: boolean | undefined;
-    private detune: number | undefined;
-    private amp: Amp | undefined;
+  number: number | undefined;
+  wavetype: Wavetype | undefined;
+  connected: boolean | undefined;
+  detune: number | undefined;
+  amp: Amp | undefined;
 
-    public setValue(update: {key: string, value: any, emitEvent: boolean}): void {
-      (this as any)[update.key] = update.value;
-      if (!update.emitEvent) {
-        return;
-      }
-      this.valueChange.next(
-        { [update.key]: update.value }
-      );
-    }
-
-    public getValue(key: string): any {
-      return (this as any)[key];
-    }
 }

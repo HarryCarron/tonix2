@@ -15,6 +15,7 @@ const AMP_KEY = 'amp';
 export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   animationRunning: any;
   currentAnimation$: any;
+  currentSubscription: any;
 
 
   constructor(private oscillatorGlobalService: OscillatorGlobalService) { }
@@ -34,10 +35,7 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   availableHeight = 0;
   availableWidth = 0;
 
-  attackPoint = 130;
-  decayPoint = 0;
-  sustainPoint = 0;
-  releasePoint = 0;
+  points = [0, 0, 0, 0];
 
 
   readonly PAD = 40;
@@ -60,34 +58,46 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
       this.svgContainer.style.height = this.availableHeight;
 
       this.renderingWidth  = (this.availableWidth - this.PAD * 2);
-      this.travelUnit  = this.renderingWidth / 100;
+      this.travelUnit  = this.renderingWidth / 10;
       this.secondWidth = (this.renderingWidth / 4);
     });
 
   }
 
   private initEnvelope(oscillator: Oscillator): void {
-    this.isEditable = oscillator.getValue(CONNECTED_KEY);
+
+    this.observeEditableState(oscillator);
     const amp = oscillator.getValue(AMP_KEY);
 
-    this.setAmpValue(
-      (Object.values(amp) as number[]).map((v: number) => (v * 10) * (this.travelUnit as number)),
-      true
-    );
-    oscillator.valueChange.subscribe(
-        (newConnectedState: any) => {
-          if (CONNECTED_KEY in newConnectedState) {
-            this.isEditable = (newConnectedState.connected as boolean);
-          }
+    this.setAmpValue(Object.values(amp) as number[]);
+  }
+
+  private observeEditableState(oscillator: Oscillator): void {
+
+    if (this.currentSubscription) {
+      this.currentSubscription();
+    }
+
+    this.isEditable = oscillator.getValue(CONNECTED_KEY);
+
+    this.currentSubscription = oscillator.valueChange.subscribe(
+      (newConnectedState: any) => {
+        if (CONNECTED_KEY in newConnectedState) {
+          this.isEditable = (newConnectedState.connected as boolean);
         }
-      );
+      }
+    );
   }
-  private setAmpValue(ampValues: number[], animate: boolean): void {
-    this.attackPoint = ampValues[0];
-    this.decayPoint = ampValues[1];
-    this.releasePoint = ampValues[2];
-    this.sustainPoint = ampValues[3];
+
+  private setAmpValue(ampValues: number[]): void {
+    ampValues.forEach((v, i, o) =>
+      this.points[i] = o.slice(0, i + 1).reduce((a, b) => a + b) * this.secondWidth
+    );
   }
+
+
+
+
 
   // private animate(): void {
 
