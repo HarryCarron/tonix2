@@ -75,7 +75,7 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   private observeEditableState(oscillator: Oscillator): void {
 
     if (this.currentSubscription) {
-      this.currentSubscription();
+      this.currentSubscription.unsubscribe();
     }
 
     this.isEditable = oscillator.getValue(CONNECTED_KEY);
