@@ -1,9 +1,18 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { OscillatorGlobalService } from './../../oscillator/services/oscillator-global.service';
 import { Oscillator } from './../../../app.component';
 import { animationFrameScheduler, of, scheduled, timer } from 'rxjs';
 import { repeat, takeUntil } from 'rxjs/operators';
+import { Points } from './adsr-envelope.objects';
 
+
+enum Curves {
+  lin,
+  exp,
+  sin
+}
+
+const AVAILABLE_DURATION = 4;
 const CONNECTED_KEY = 'connected';
 const AMP_KEY = 'amp';
 
@@ -16,9 +25,11 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   animationRunning: any;
   currentAnimation$: any;
   currentSubscription: any;
+  renderingHeight: any;
 
+  readonly curveTypes = [Curves.lin, Curves.lin, Curves.lin];
 
-  constructor(private oscillatorGlobalService: OscillatorGlobalService) { }
+  constructor(private oscillatorGlobalService: OscillatorGlobalService, private cd: ChangeDetectorRef) { }
 
   @Input() activeOscillator: Oscillator | undefined;
 
@@ -29,18 +40,26 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   renderingWidth = 0;
   isEditable = false;
 
+  curves = Curves;
+
   private envelopeContainer: any;
   private svgContainer: any;
 
   availableHeight = 0;
   availableWidth = 0;
 
-  points = [0, 0, 0, 0];
+  points: Points = [0, 0, 0, 0];
 
 
   readonly PAD = 40;
 
   secondDurationLabels = [0, 1, 2, 3, 4];
+
+  /**
+   * Value for width of the sustain portion of the envelope.
+   * As sustain controls amplitude (and is controlled by Y axis of env) the width is entirely aesthetic;
+   */
+  sustainWidth = 0;
 
   secondWidth = 0;
 
@@ -57,9 +76,10 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
       this.svgContainer.style.width = this.availableWidth;
       this.svgContainer.style.height = this.availableHeight;
 
-      this.renderingWidth  = (this.availableWidth - this.PAD * 2);
+      this.renderingHeight  = this.availableHeight - (this.PAD * 2);
+      this.renderingWidth  = this.availableWidth - (this.PAD * 2);
       this.travelUnit  = this.renderingWidth / 10;
-      this.secondWidth = (this.renderingWidth / 4);
+      this.secondWidth = (this.renderingWidth / AVAILABLE_DURATION);
     });
 
   }
@@ -90,35 +110,35 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   }
 
   private setAmpValue(ampValues: number[]): void {
-    ampValues.forEach((v, i, o) =>
-      this.points[i] = o.slice(0, i + 1).reduce((a, b) => a + b) * this.secondWidth
-    );
+
+    const sustainWidth = AVAILABLE_DURATION - (ampValues.filter((amp, i) => i !== 2).reduce((a, b) => a + b));
+
+    let totalDuration = 0;
+
+    ampValues.forEach((v, i) => {
+      if (i !== 2) {
+        totalDuration += v;
+
+        this.points[i] = totalDuration * this.secondWidth;
+      } else {
+        totalDuration += sustainWidth;
+        this.sustainWidth =  sustainWidth * this.secondWidth;
+        this.points[i] = this.renderingHeight - (v * this.renderingHeight);
+      }
+    });
   }
 
+  toggleCurve(curveID: number): void {
+    let curve = this.curveTypes[curveID];
+    if (curve === 2) {
+      curve = 0;
+      this.curveTypes[curveID] = curve;
+    } else {
+      this.curveTypes[curveID] = curve + 1;
+    }
+    this.cd.detectChanges();
 
-
-
-
-  // private animate(): void {
-
-  //   if (this.animationRunning) {
-  //     this.currentAnimation$.next();
-  //   }
-
-  //   this.animationRunning = true;
-  //   let count = -1;
-  //   scheduled(of(0), animationFrameScheduler)
-  //   .pipe(repeat(), takeUntil(this.currentAnimation$))
-  //   .subscribe(x => {
-  //     count ++;
-
-
-  //     if (count === time) {
-  //       this.animationRunning = false;
-  //       this.currentAnimation$.next();
-  //     }
-  //   });
-  // };
+  }
 
 
   @ViewChild('envelopeContainer') set envelopeContainerElem(e: any) {

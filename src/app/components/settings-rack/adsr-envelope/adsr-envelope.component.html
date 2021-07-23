@@ -1,7 +1,9 @@
 <div class="w-100 h-100" #envelopeContainer>
-  <svg #svgContainer >
+  <svg #svgContainer>
 
-      <g *ngFor="let secondDurationLabel of secondDurationLabels; let i = index;">
+      <rect [attr.x]="PAD / 2" fill="#252c33" [attr.height]="availableHeight - (PAD / 2)" [attr.width]="availableWidth - (PAD)" rx="5" />
+
+      <!-- <g *ngFor="let secondDurationLabel of secondDurationLabels; let i = index;">
         <line
           [attr.x1]="PAD + (secondWidth * i)"
           [attr.y1]="PAD"
@@ -15,12 +17,13 @@
             secondDurationLabel
           }}
         </text>
-      </g>
+      </g> -->
+
 
 
       <!-- attack -->
       <circle
-        *ngIf="isEditable"
+        [ngClass]="{'off' : !isEditable}"
         #attackHandle
         [attr.cx]="PAD"
         [attr.cy]="availableHeight - (PAD + 10)"
@@ -30,22 +33,65 @@
         fill-opacity="0"
         class="handle"
       />
+      <text style="fill: #A9A9A9" [attr.y]="availableHeight - (PAD + 10) + 15" [attr.x]="PAD - 3">
+        0
+      </text>
       <line
         #attackLine
+        [ngClass]="{'line-off' : !isEditable}"
         [attr.x1]="PAD"
+        [attr.y1]="availableHeight - (PAD + 10)"
+        [attr.x2]="PAD + points[0]"
+        [attr.y2]="PAD"
+        stroke-linecap="round"
+        stroke-width="3"
+        stroke="white"
+      />
+
+      <line
+          #attackLine
+          *ngIf="curveTypes[0] === curves.lin"
+          [ngClass]="{'line-off' : !isEditable}"
+          [attr.x1]="PAD"
+          [attr.y1]="availableHeight - (PAD + 10)"
+          [attr.x2]="PAD + points[0]"
+          [attr.y2]="PAD"
+          stroke-linecap="round"
+          stroke-width="3"
+          stroke="white"
+        />
+
+        <path
+          *ngIf="curveTypes[0] === curves.exp"
+          [attr.d]="'M' + PAD + ' ' + (availableHeight - (PAD + 10))"
+          stroke="white"
+          fill="transparent"
+        />
+
+      <!-- attack end -->
+
+      <!-- <line
+        #attackLine
+        [attr.x1]="points[0] + PAD"
         [attr.y1]="availableHeight - (PAD + 10)"
         [attr.x2]="points[0] + PAD"
         [attr.y2]="PAD"
         stroke-linecap="round"
-        stroke-width="3"
-        [attr.stroke]="lineColour"
+        stroke-width="1"
+        stroke="white"
+        stroke-dasharray="1, 2"
       />
+      <text *ngIf="points[0] / this.secondWidth > 0.1" [attr.x]="points[0] + PAD - 5" style="fill: #A9A9A9" [attr.y]="availableHeight - (PAD + 10) + 15">
+        {{
+          points[0] / this.secondWidth
+        }}
+      </text> -->
       <!-- attack end -->
       <!-- decay -->
       <circle
-        *ngIf="isEditable"
+        [ngClass]="{'off' : !isEditable}"
         #decayHandle
-        [attr.cx]="points[0] + PAD"
+        [attr.cx]="PAD + points[0]"
         [attr.cy]="PAD"
         r="4"
         stroke="#fffd47"
@@ -54,22 +100,41 @@
         class="handle"
       />
       <line
-        #attackLine
-        [attr.x1]="points[0] + PAD"
+        #decayLine
+        [ngClass]="{'line-off' : !isEditable}"
+        [attr.x1]="PAD + points[0]"
         [attr.y1]="PAD"
-        [attr.x2]="points[1] + PAD"
-        [attr.y2]="PAD + 30"
+        [attr.x2]="PAD + points[1]"
+        [attr.y2]="PAD + points[2]"
         stroke-linecap="round"
         stroke-width="3"
-        [attr.stroke]="lineColour"
+        stroke="white"
       />
+      <!-- decay end -->
+
+      <!-- <line
+      #attackLine
+      [attr.x1]="points[1] + PAD"
+      [attr.y1]="availableHeight - (PAD + 10)"
+      [attr.x2]="points[1] + PAD"
+      [attr.y2]="PAD"
+      stroke-linecap="round"
+      stroke-width="1"
+      stroke="white"
+      stroke-dasharray="1, 2"
+    />
+    <text [attr.x]="points[1] + PAD - 5" style="fill: #A9A9A9" [attr.y]="availableHeight - (PAD + 10) + 15">
+      {{
+        points[1] / this.secondWidth
+      }}
+    </text> -->
       <!-- decay end -->
       <!-- sustain -->
       <circle
-        *ngIf="isEditable"
+        [ngClass]="{'off' : !isEditable}"
         #sustainHandle
-        [attr.cx]="points[1] + PAD"
-        [attr.cy]="PAD + 30"
+        [attr.cx]="PAD + points[1]"
+        [attr.cy]="PAD + points[2]"
         r="4"
         stroke="#fffd47"
         stroke-width="3"
@@ -78,21 +143,22 @@
       />
 
       <line
-        #attackLine
-        [attr.x1]="points[1] + PAD"
-        [attr.y1]="PAD + 30"
-        [attr.x2]="points[2]  + PAD"
-        [attr.y2]="PAD + 30"
+        #sustainLine
+        [ngClass]="{'line-off' : !isEditable}"
+        [attr.x1]="PAD + points[1]"
+        [attr.y1]="PAD + points[2]"
+        [attr.x2]="PAD + sustainWidth"
+        [attr.y2]="PAD + points[2]"
         stroke-linecap="round"
         stroke-width="3"
-        [attr.stroke]="lineColour"
+        stroke="white"
       />
       <!-- release -->
       <circle
         *ngIf="isEditable"
         #releaseHandle
-        [attr.cx]="points[2] + PAD"
-        [attr.cy]="PAD + 30"
+        [attr.cx]="PAD + sustainWidth"
+        [attr.cy]="PAD + points[2]"
         r="4"
         stroke="#fffd47"
         stroke-width="3"
@@ -101,19 +167,20 @@
       />
 
       <line
-        #attackLine
-        [attr.x1]="points[2] + PAD"
-        [attr.y1]="PAD + 30"
-        [attr.x2]="points[3] + PAD"
+        #releaseLine
+        [ngClass]="{'line-off' : !isEditable}"
+        [attr.x1]="PAD + this.sustainWidth"
+        [attr.y1]="PAD + points[2]"
+        [attr.x2]="PAD + points[3]"
         [attr.y2]="availableHeight - (PAD + 10)"
         stroke-linecap="round"
         stroke-width="3"
-        [attr.stroke]="lineColour"
+        stroke="white"
       />
+
       <circle
         *ngIf="isEditable"
-        #endHandle
-        [attr.cx]="points[3] + PAD"
+        [attr.cx]="PAD + points[3]"
         [attr.cy]="availableHeight - (PAD + 10)"
         r="4"
         stroke="#fffd47"
@@ -122,5 +189,11 @@
         class="handle"
       />
 
+      <rect (click)="toggleCurve(0)" [attr.x]="PAD" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="points[0]" rx="4" />
+      <rect [attr.x]="PAD + points[1]" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="PAD + points[1]" rx="4" />
+
   </svg>
+
+
+
 </div>

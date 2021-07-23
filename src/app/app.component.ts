@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
           amp: {
             attack: r(),
             decay: r(),
-            sustain: 1,
+            sustain: 0.4,
             release: r()
           },
         }
