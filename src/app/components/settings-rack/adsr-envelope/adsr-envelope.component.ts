@@ -40,6 +40,10 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   renderingWidth = 0;
   isEditable = false;
 
+  get lineBase(): number {
+    return this.availableHeight - (this.PAD + 10);
+  }
+
   curves = Curves;
 
   private envelopeContainer: any;
@@ -49,9 +53,10 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   availableWidth = 0;
 
   points: Points = [0, 0, 0, 0];
+  points2: Points = [0, 0, 0, 0];
 
 
-  readonly PAD = 40;
+  readonly PAD = 35;
 
   secondDurationLabels = [0, 1, 2, 3, 4];
 
@@ -120,6 +125,7 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
         totalDuration += v;
 
         this.points[i] = totalDuration * this.secondWidth;
+        this.points2[i] = v * this.secondWidth;
       } else {
         totalDuration += sustainWidth;
         this.sustainWidth =  sustainWidth * this.secondWidth;
@@ -139,6 +145,71 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
     this.cd.detectChanges();
 
   }
+
+  getAttackCurve(): string {
+    const curveType = this.curveTypes[0];
+    switch (curveType) {
+      case(Curves.sin): {
+        return `M ${this.PAD} ${ this.lineBase } Q ${ this.PAD } ${ this.PAD }, ${this.PAD + this.points[0]} ${ this.PAD }`;
+      }
+      case(Curves.exp): {
+        return `M ${this.PAD} ${ this.lineBase } Q ${ this.PAD + this.points[0] } ${ this.lineBase }, ${this.PAD + this.points[0]} ${ this.PAD }`;
+      }
+      case(Curves.lin): {
+        return `M ${this.PAD} ${ this.lineBase }, ${this.PAD + this.points[0]} ${ this.PAD }`;
+      }
+
+    }
+  }
+  getDecayCurve(): string {
+    const curveType = this.curveTypes[1];
+    switch (curveType) {
+      case(Curves.sin): {
+        return `M ${this.PAD + this.points[0]} ${ this.PAD } Q ${ this.PAD + this.points[1] } ${ this.PAD }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
+      }
+      case(Curves.exp): {
+        return `M ${this.PAD + this.points[0]} ${ this.PAD } Q ${ this.points[1] } ${ this.PAD + this.points[2] }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
+      }
+      case(Curves.lin): {
+        return `M ${this.PAD + this.points[0]} ${ this.PAD }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
+
+      }
+
+    }
+  }
+
+  getReleaseCurve(): string {
+    // const curveType = this.curveTypes[2];
+    // switch (curveType) {
+    //   // case(Curves.sin): {
+    //   //   return `M ${this.PAD + this.points[0]} ${ this.PAD } Q ${ this.PAD + this.points[1] } ${ this.PAD }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
+    //   // }
+    //   // case(Curves.exp): {
+    //   //   return `M ${this.PAD + this.points[0]} ${ this.PAD } Q ${ this.points[1] } ${ this.PAD + this.points[2] }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
+    //   // }
+    //   case(Curves.lin): {
+    //     return `M ${this.PAD + this.sustainWidth} ${ this.PAD + this.points[2] }, ${this.PAD + this.points[3]} ${ this.lineBase }`;
+
+    //   }
+    //   // [attr.x2]="PAD + points[3]"
+    //   // [attr.y2]="lineBase"
+
+    // }
+    return '';
+  }
+
+
+//   <line
+//   #decayLine
+//   [ngClass]="{'line-off' : !isEditable}"
+//   [attr.x1]="PAD + points[0]"
+//   [attr.y1]="PAD"
+//   [attr.x2]="PAD + points[1]"
+//   [attr.y2]="PAD + points[2]"
+//   stroke-linecap="round"
+//   stroke-width="3"
+//   stroke="white"
+// />
 
 
   @ViewChild('envelopeContainer') set envelopeContainerElem(e: any) {
