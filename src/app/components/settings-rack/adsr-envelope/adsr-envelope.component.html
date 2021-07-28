@@ -4,8 +4,6 @@
   <div  class="flex-1">
     <svg #svgContainer>
 
-
-
       <rect [attr.x]="PAD / 2" fill="#252c33" [attr.height]="availableHeight - (PAD / 2)" [attr.width]="availableWidth - (PAD)" rx="5" />
 
       <circle
@@ -37,7 +35,7 @@
       <circle
         [ngClass]="{'off' : !isEditable}"
         #decayHandle
-        [attr.cx]="PAD + points[0]"
+        [attr.cx]="PAD + cumulativePoints[0]"
         [attr.cy]="PAD"
         r="2"
         stroke="#fffd47"
@@ -93,21 +91,22 @@
       <circle
         [ngClass]="{'off' : !isEditable}"
         #sustainHandle
-        [attr.cx]="PAD + points[1]"
-        [attr.cy]="PAD + points[2]"
+        [attr.cx]="PAD + cumulativePoints[1]"
+        [attr.cy]="PAD + cumulativePoints[2]"
         r="2"
         stroke="#fffd47"
         stroke-width="3"
         class="handle"
       />
 
+
       <line
         #sustainLine
         [ngClass]="{'line-off' : !isEditable}"
-        [attr.x1]="PAD + points[1]"
-        [attr.y1]="PAD + points[2]"
+        [attr.x1]="PAD + cumulativePoints[1]"
+        [attr.y1]="PAD + cumulativePoints[2]"
         [attr.x2]="PAD + sustainWidth"
-        [attr.y2]="PAD + points[2]"
+        [attr.y2]="PAD + cumulativePoints[2]"
         stroke-linecap="round"
         stroke-width="3"
         stroke="white"
@@ -117,12 +116,47 @@
         *ngIf="isEditable"
         #releaseHandle
         [attr.cx]="PAD + sustainWidth"
-        [attr.cy]="PAD + points[2]"
+        [attr.cy]="PAD + cumulativePoints[2]"
         r="2"
         stroke="#fffd47"
         stroke-width="3"
         class="handle"
       />
+
+      <!-- <circle
+        [attr.cx]="PAD + this.cumulativePoints[1]"
+        [attr.cy]="PAD"
+        r="2"
+        stroke="red"
+        stroke-width="3"
+        class="handle"
+      /> -->
+
+
+      <!-- <circle
+        [attr.cx]="PAD + cumulativePoints[0]"
+        [attr.cy]="lineBase"
+        r="2"
+        stroke="red"
+        stroke-width="3"
+        class="handle"
+      />
+      <circle
+        [attr.cx]="PAD + cumulativePoints[1]"
+        [attr.cy]="lineBase"
+        r="2"
+        stroke="red"
+        stroke-width="3"
+        class="handle"
+      />
+      <circle
+        [attr.cx]="PAD + cumulativePoints[2]"
+        [attr.cy]="lineBase"
+        r="2"
+        stroke="red"
+        stroke-width="3"
+        class="handle"
+      /> -->
 
       <!-- <line
         #releaseLine
@@ -148,7 +182,7 @@
 
       <circle
         *ngIf="isEditable"
-        [attr.cx]="PAD + points[3]"
+        [attr.cx]="PAD + cumulativePoints[3]"
         [attr.cy]="lineBase"
         r="2"
         stroke="#fffd47"
@@ -156,8 +190,8 @@
         class="handle"
       />
       <rect (click)="toggleCurve(0)" [attr.x]="PAD" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="points[0]" rx="4" />
-      <rect (click)="toggleCurve(1)" [attr.x]="PAD + points[0]" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="points2[1]" rx="4" />
-      <rect (click)="toggleCurve(2)" [attr.x]="PAD + sustainWidth" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="sustainWidth + points2[2]" rx="4" />
+      <rect (click)="toggleCurve(1)" [attr.x]="PAD + points[0]" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="points[1]" rx="4" />
+      <rect (click)="toggleCurve(2)" [attr.x]="PAD + sustainWidth" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="PAD + points[3]" rx="4" />
 
 
   </svg>

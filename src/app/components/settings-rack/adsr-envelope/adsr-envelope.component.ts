@@ -52,8 +52,8 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   availableHeight = 0;
   availableWidth = 0;
 
+  cumulativePoints: Points = [0, 0, 0, 0];
   points: Points = [0, 0, 0, 0];
-  points2: Points = [0, 0, 0, 0];
 
 
   readonly PAD = 35;
@@ -123,13 +123,12 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
     ampValues.forEach((v, i) => {
       if (i !== 2) {
         totalDuration += v;
-
-        this.points[i] = totalDuration * this.secondWidth;
-        this.points2[i] = v * this.secondWidth;
+        this.cumulativePoints[i] = totalDuration * this.secondWidth;
+        this.points[i] = v * this.secondWidth;
       } else {
         totalDuration += sustainWidth;
         this.sustainWidth =  sustainWidth * this.secondWidth;
-        this.points[i] = this.renderingHeight - (v * this.renderingHeight);
+        this.cumulativePoints[i] = this.renderingHeight - (v * this.renderingHeight);
       }
     });
   }
@@ -148,53 +147,47 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
 
   getAttackCurve(): string {
     const curveType = this.curveTypes[0];
+    let curve = '';
     switch (curveType) {
       case(Curves.sin): {
-        return `M ${this.PAD} ${ this.lineBase } Q ${ this.PAD } ${ this.PAD }, ${this.PAD + this.points[0]} ${ this.PAD }`;
+        curve =  `Q ${ this.PAD } ${ this.PAD }, `;
+        break;
       }
       case(Curves.exp): {
-        return `M ${this.PAD} ${ this.lineBase } Q ${ this.PAD + this.points[0] } ${ this.lineBase }, ${this.PAD + this.points[0]} ${ this.PAD }`;
+        curve = `Q ${ this.PAD + this.cumulativePoints[0] } ${ this.lineBase }, `;
+        break;
       }
-      case(Curves.lin): {
-        return `M ${this.PAD} ${ this.lineBase }, ${this.PAD + this.points[0]} ${ this.PAD }`;
-      }
-
     }
+
+    return [
+      `M ${this.PAD} ${ this.lineBase } `,
+      curve,
+      `${this.PAD + this.cumulativePoints[0]} ${ this.PAD }`
+    ].join('');
   }
+
   getDecayCurve(): string {
     const curveType = this.curveTypes[1];
+    let curve = '';
     switch (curveType) {
-      case(Curves.sin): {
-        return `M ${this.PAD + this.points[0]} ${ this.PAD } Q ${ this.PAD + this.points[1] } ${ this.PAD }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
-      }
-      case(Curves.exp): {
-        return `M ${this.PAD + this.points[0]} ${ this.PAD } Q ${ this.points[1] } ${ this.PAD + this.points[2] }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
-      }
-      case(Curves.lin): {
-        return `M ${this.PAD + this.points[0]} ${ this.PAD }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
-
-      }
-
+        case(Curves.sin): {
+          curve = `Q ${ this.PAD + this.cumulativePoints[1] } ${ this.PAD }, `;
+          break;
+        }
+        case(Curves.exp): {
+          curve = `Q ${ this.PAD + this.cumulativePoints[0] } ${ this.PAD + this.cumulativePoints[2] }, `;
+        }
     }
+
+    return [
+      `M ${this.PAD + this.cumulativePoints[0]} ${ this.PAD } `,
+      curve,
+      `${this.PAD + this.cumulativePoints[1]} ${ this.PAD + this.cumulativePoints[2] }`
+    ].join('');
   }
 
   getReleaseCurve(): string {
-    // const curveType = this.curveTypes[2];
-    // switch (curveType) {
-    //   // case(Curves.sin): {
-    //   //   return `M ${this.PAD + this.points[0]} ${ this.PAD } Q ${ this.PAD + this.points[1] } ${ this.PAD }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
-    //   // }
-    //   // case(Curves.exp): {
-    //   //   return `M ${this.PAD + this.points[0]} ${ this.PAD } Q ${ this.points[1] } ${ this.PAD + this.points[2] }, ${this.PAD + this.points[1]} ${ this.PAD + this.points[2] }`;
-    //   // }
-    //   case(Curves.lin): {
-    //     return `M ${this.PAD + this.sustainWidth} ${ this.PAD + this.points[2] }, ${this.PAD + this.points[3]} ${ this.lineBase }`;
 
-    //   }
-    //   // [attr.x2]="PAD + points[3]"
-    //   // [attr.y2]="lineBase"
-
-    // }
     return '';
   }
 
