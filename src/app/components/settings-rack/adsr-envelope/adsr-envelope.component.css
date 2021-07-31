@@ -13,7 +13,12 @@
 .line-off {
   opacity: 0.3;
 }
-
+.overview-container {
+  width: 10%;
+}
+.envelope-container {
+  width: 90%;
+}
 text {
   font-family: monospace;
 }
@@ -24,4 +29,8 @@ text {
 }
 .line-overlay:hover {
   opacity: 0.7;
+}
+
+.line {
+  cursor: pointer;
 }

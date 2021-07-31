@@ -1,48 +1,40 @@
-<div class="w-100 h-100 d-flex" #envelopeContainer>
-  <div class="flex-1">
-  </div>
-  <div  class="flex-1">
+<div class="w-100 h-100 d-flex" >
+  <!-- <div class="overview-container">
+    hey
+  </div> -->
+  <div class="flex-1" #envelopeContainer>
     <svg #svgContainer>
 
       <rect [attr.x]="PAD / 2" fill="#252c33" [attr.height]="availableHeight - (PAD / 2)" [attr.width]="availableWidth - (PAD)" rx="5" />
 
-      <circle
-        [ngClass]="{'off' : !isEditable}"
-        #attackHandle
-        [attr.cx]="PAD"
-        [attr.cy]="lineBase"
-        r="2"
-        stroke="#fffd47"
-        stroke-width="3"
-        class="handle"
-      />
       <text style="fill: #A9A9A9" [attr.y]="lineBase + 15" [attr.x]="PAD - 3">
         0
       </text>
 
-        <path
-          [ngClass]="{'line-off' : !isEditable}"
-          [attr.d]="getAttackCurve()"
-          stroke="white"
-          fill="transparent"
-          stroke-linecap="round"
-          stroke-width="3"
-          stroke="white"
-        />
-
-      <!-- attack end -->
-      <!-- decay -->
-      <circle
-        [ngClass]="{'off' : !isEditable}"
-        #decayHandle
-        [attr.cx]="PAD + cumulativePoints[0]"
-        [attr.cy]="PAD"
-        r="2"
-        stroke="#fffd47"
+      <path
+        [ngClass]="{'line-off' : !isEditable}"
+        [attr.d]="getAttackCurve()"
+        stroke="white"
+        fill="transparent"
+        stroke-linecap="round"
         stroke-width="3"
-        class="handle"
+        stroke="white"
+        class="line"
       />
 
+      <path
+        [attr.d]="getAttackCurve()"
+        stroke="white"
+        fill="transparent"
+        stroke-linecap="round"
+        stroke-width="15"
+        stroke="#0074D9"
+        class="line"
+        (mouseenter)="hovered[0]=true"
+        (mouseleave)="hovered[0]=false"
+        [attr.stroke-opacity]="hovered[0] ? '0.4' : '0'"
+        (click)="toggleCurve(0)"
+      />
 
       <path
         [ngClass]="{'line-off' : !isEditable}"
@@ -53,50 +45,19 @@
         stroke-width="3"
         stroke="white"
       />
-      <!-- getReleaseCurve -->
 
-
-      <!-- <line
-        #decayLine
-        [ngClass]="{'line-off' : !isEditable}"
-        [attr.x1]="PAD + points[0]"
-        [attr.y1]="PAD"
-        [attr.x2]="PAD + points[1]"
-        [attr.y2]="PAD + points[2]"
-        stroke-linecap="round"
-        stroke-width="3"
+      <path
+        [attr.d]="getDecayCurve()"
         stroke="white"
-      /> -->
-
-      <!-- decay end -->
-
-      <!-- <line
-      #attackLine
-      [attr.x1]="points[1] + PAD"
-      [attr.y1]="availableHeight - (PAD + 10)"
-      [attr.x2]="points[1] + PAD"
-      [attr.y2]="PAD"
-      stroke-linecap="round"
-      stroke-width="1"
-      stroke="white"
-      stroke-dasharray="1, 2"
-    />
-    <text [attr.x]="points[1] + PAD - 5" style="fill: #A9A9A9" [attr.y]="availableHeight - (PAD + 10) + 15">
-      {{
-        points[1] / this.secondWidth
-      }}
-    </text> -->
-      <!-- decay end -->
-      <!-- sustain -->
-      <circle
-        [ngClass]="{'off' : !isEditable}"
-        #sustainHandle
-        [attr.cx]="PAD + cumulativePoints[1]"
-        [attr.cy]="PAD + cumulativePoints[2]"
-        r="2"
-        stroke="#fffd47"
-        stroke-width="3"
-        class="handle"
+        fill="transparent"
+        stroke-linecap="round"
+        stroke-width="15"
+        stroke="#0074D9"
+        class="line"
+        (mouseenter)="hovered[1]=true"
+        (mouseleave)="hovered[1]=false"
+        [attr.stroke-opacity]="hovered[1] ? '0.4' : '0'"
+        (click)="toggleCurve(1)"
       />
 
 
@@ -111,93 +72,76 @@
         stroke-width="3"
         stroke="white"
       />
-      <!-- release -->
-      <circle
-        *ngIf="isEditable"
-        #releaseHandle
-        [attr.cx]="PAD + sustainWidth"
-        [attr.cy]="PAD + cumulativePoints[2]"
-        r="2"
-        stroke="#fffd47"
-        stroke-width="3"
-        class="handle"
-      />
 
-      <!-- <circle
-        [attr.cx]="PAD + this.cumulativePoints[1]"
-        [attr.cy]="PAD"
-        r="2"
-        stroke="red"
-        stroke-width="3"
-        class="handle"
-      /> -->
-
-
-      <!-- <circle
-        [attr.cx]="PAD + cumulativePoints[0]"
-        [attr.cy]="lineBase"
-        r="2"
-        stroke="red"
-        stroke-width="3"
-        class="handle"
-      />
-      <circle
-        [attr.cx]="PAD + cumulativePoints[1]"
-        [attr.cy]="lineBase"
-        r="2"
-        stroke="red"
-        stroke-width="3"
-        class="handle"
-      />
-      <circle
-        [attr.cx]="PAD + cumulativePoints[2]"
-        [attr.cy]="lineBase"
-        r="2"
-        stroke="red"
-        stroke-width="3"
-        class="handle"
-      /> -->
-
-      <!-- <line
-        #releaseLine
+      <path
         [ngClass]="{'line-off' : !isEditable}"
-        [attr.x1]="PAD + this.sustainWidth"
-        [attr.y1]="PAD + points[2]"
-        [attr.x2]="PAD + points[3]"
-        [attr.y2]="lineBase"
+        [attr.d]="getReleaseCurve()"
+        stroke="white"
+        fill="transparent"
         stroke-linecap="round"
         stroke-width="3"
         stroke="white"
-      /> -->
+      />
 
-      <path
-      [ngClass]="{'line-off' : !isEditable}"
-      [attr.d]="getReleaseCurve()"
-      stroke="white"
-      fill="transparent"
-      stroke-linecap="round"
+    <circle
+      [ngClass]="{'off' : !isEditable}"
+      #sustainHandle
+      [attr.cx]="PAD + cumulativePoints[1]"
+      [attr.cy]="PAD + cumulativePoints[2]"
+      [attr.r]="handleRadius"
+      stroke="#fffd47"
       stroke-width="3"
-      stroke="white"
+      class="handle"
     />
 
-      <circle
-        *ngIf="isEditable"
-        [attr.cx]="PAD + cumulativePoints[3]"
-        [attr.cy]="lineBase"
-        r="2"
-        stroke="#fffd47"
-        stroke-width="3"
-        class="handle"
-      />
-      <rect (click)="toggleCurve(0)" [attr.x]="PAD" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="points[0]" rx="4" />
-      <rect (click)="toggleCurve(1)" [attr.x]="PAD + points[0]" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="points[1]" rx="4" />
-      <rect (click)="toggleCurve(2)" [attr.x]="PAD + sustainWidth" [attr.y]="PAD" class="line-overlay" fill="#0074D9" [attr.height]="availableHeight - (PAD * 2 + 10)" [attr.width]="PAD + points[3]" rx="4" />
 
+    <circle
+      *ngIf="isEditable"
+      #releaseHandle
+      [attr.cx]="PAD + sustainWidth"
+      [attr.cy]="PAD + cumulativePoints[2]"
+      [attr.r]="handleRadius"
+      stroke="#fffd47"
+      stroke-width="3"
+      stroke-fill="transparent"
+      class="handle"
+    />
 
+    <circle
+      [ngClass]="{'off' : !isEditable}"
+      #attackHandle
+      [attr.cx]="PAD"
+      [attr.cy]="lineBase"
+      [attr.r]="handleRadius"
+      stroke="#fffd47"
+      stroke-width="3"
+      stroke-fill="transparent"
+      class="handle"
+    />
+
+    <circle
+      *ngIf="isEditable"
+      [attr.cx]="PAD + cumulativePoints[3]"
+      [attr.cy]="lineBase"
+      [attr.r]="handleRadius"
+      stroke="#fffd47"
+      stroke-width="3"
+      stroke-fill="transparent"
+      class="handle"
+    />
+
+    <circle
+      [ngClass]="{'off' : !isEditable}"
+      #decayHandle
+      [attr.cx]="PAD + cumulativePoints[0]"
+      [attr.cy]="PAD"
+      [attr.r]="handleRadius"
+      stroke="#fffd47"
+      stroke-width="3"
+      stroke-fill="transparent"
+      class="handle"
+    />
   </svg>
   </div>
-
-
-
-
 </div>
+

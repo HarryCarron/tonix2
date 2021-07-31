@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { OscillatorGlobalService } from './../../oscillator/services/oscillator-global.service';
+import { UtilitesService } from './../../oscillator/services/utilites.service';
 import { Oscillator } from './../../../app.component';
-import { animationFrameScheduler, of, scheduled, timer } from 'rxjs';
-import { repeat, takeUntil } from 'rxjs/operators';
+import { timer } from 'rxjs';
 import { Points } from './adsr-envelope.objects';
 
 
@@ -27,9 +27,15 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   currentSubscription: any;
   renderingHeight: any;
 
+  hovered = {};
+
   readonly curveTypes = [Curves.lin, Curves.lin, Curves.lin];
 
-  constructor(private oscillatorGlobalService: OscillatorGlobalService, private cd: ChangeDetectorRef) { }
+  constructor(
+    private oscillatorGlobalService: OscillatorGlobalService,
+    private cd: ChangeDetectorRef,
+    public utils: UtilitesService
+    ) { }
 
   @Input() activeOscillator: Oscillator | undefined;
 
@@ -55,7 +61,7 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   cumulativePoints: Points = [0, 0, 0, 0];
   points: Points = [0, 0, 0, 0];
 
-
+  readonly handleRadius: number = 4;
   readonly PAD = 35;
 
   secondDurationLabels = [0, 1, 2, 3, 4];
@@ -69,9 +75,16 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   secondWidth = 0;
 
   ngOnInit(): void {
+    const activeOscillator = this.oscillatorGlobalService.selectedOsc$.getValue();
+
+    if (activeOscillator) {
+      this.initEnvelope(activeOscillator as Oscillator);
+    }
+
     this.oscillatorGlobalService.selectedOsc$.subscribe(
-      activeOscillator => activeOscillator && this.initEnvelope(activeOscillator as Oscillator)
+      newActiveOscillator => newActiveOscillator && this.initEnvelope(newActiveOscillator as Oscillator)
     );
+
   }
 
   ngAfterViewInit(): void {
@@ -187,7 +200,11 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   }
 
   getReleaseCurve(): string {
-
+    // return [
+    //   `M ${this.PAD + this.points[3]} ${ this.cumulativePoints[2] } `,
+    //   // curve,
+    //   `${this.PAD + this.cumulativePoints[1]} ${ this.PAD + this.cumulativePoints[2] }`
+    // ].join('');
     return '';
   }
 
