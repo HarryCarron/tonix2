@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild, ChangeDetectorRef, Renderer2 } from '@angular/core';
 import { OscillatorGlobalService } from './../../oscillator/services/oscillator-global.service';
 import { UtilitesService } from './../../oscillator/services/utilites.service';
 import { Oscillator } from './../../../app.component';
 import { timer } from 'rxjs';
 import { Points } from './adsr-envelope.objects';
-
+import { DragAndDropComponent } from './../../../baseComponents/drag-and-drop/drag-and-drop.component';
 
 enum Curves {
   lin,
@@ -21,33 +21,46 @@ const AMP_KEY = 'amp';
   templateUrl: './adsr-envelope.component.html',
   styleUrls: ['./adsr-envelope.component.css']
 })
-export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
+export class AdsrEnvelopeComponent extends DragAndDropComponent implements OnInit, AfterViewInit {
   animationRunning: any;
   currentAnimation$: any;
   currentSubscription: any;
   renderingHeight: any;
 
-  hovered = {};
+  pathWidth = 3;
+
+  hovered = [
+    false,
+    false,
+    false,
+    false
+  ];
 
   readonly curveTypes = [Curves.lin, Curves.lin, Curves.lin];
+  svgPositions: any;
+  amp: any;
 
   constructor(
+
     private oscillatorGlobalService: OscillatorGlobalService,
     private cd: ChangeDetectorRef,
-    public utils: UtilitesService
-    ) { }
+    public utils: UtilitesService,
+    public renderer: Renderer2
+    ) {
+      super(renderer);
+    }
 
   @Input() activeOscillator: Oscillator | undefined;
 
   get lineColour(): string {
     return this.isEditable ? 'white' : 'gray';
   }
-  travelUnit: number | undefined;
+  travelUnit = 0;
   renderingWidth = 0;
   isEditable = false;
 
   get lineBase(): number {
-    return this.availableHeight - (this.PAD + 10);
+    return this.availableHeight - (this.YPAD + 10);
   }
 
   curves = Curves;
@@ -62,7 +75,8 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
   points: Points = [0, 0, 0, 0];
 
   readonly handleRadius: number = 4;
-  readonly PAD = 35;
+  readonly YPAD = 35;
+  readonly XPAD = 50;
 
   secondDurationLabels = [0, 1, 2, 3, 4];
 
@@ -81,33 +95,49 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
       this.initEnvelope(activeOscillator as Oscillator);
     }
 
+    this.subscribeToOscillatorChanges();
+    this.subscribeToPointChanges();
+
+  }
+  private subscribeToOscillatorChanges(): void {
     this.oscillatorGlobalService.selectedOsc$.subscribe(
       newActiveOscillator => newActiveOscillator && this.initEnvelope(newActiveOscillator as Oscillator)
     );
+  }
 
+  private subscribeToPointChanges(): void {
+    this.dragAndDrop$.subscribe((data: any) => {
+      const actualX = ((data.mouseLocation.x - (this.svgPositions.left + this.XPAD)) / 100) / (this.secondWidth / 100);
+
+      if (actualX <= 0) {
+        return;
+      }
+      this.amp.attack = actualX;
+      const values: number[] = Object.values(this.amp);
+      this.setAmpValue(values, false);
+    });
   }
 
   ngAfterViewInit(): void {
     timer(0).subscribe(_ => {
-      this.availableHeight =  this.envelopeContainer.offsetHeight;
-      this.availableWidth =  this.envelopeContainer.offsetWidth;
+      this.availableHeight = this.envelopeContainer.offsetHeight;
+      this.availableWidth = this.envelopeContainer.offsetWidth;
       this.svgContainer.style.width = this.availableWidth;
       this.svgContainer.style.height = this.availableHeight;
 
-      this.renderingHeight  = this.availableHeight - (this.PAD * 2);
-      this.renderingWidth  = this.availableWidth - (this.PAD * 2);
-      this.travelUnit  = this.renderingWidth / 10;
+      this.renderingHeight  = this.availableHeight - (this.YPAD * 2);
+      this.renderingWidth  = this.availableWidth - (this.XPAD * 2);
+      this.travelUnit  = this.renderingWidth / 100;
       this.secondWidth = (this.renderingWidth / AVAILABLE_DURATION);
     });
 
   }
 
   private initEnvelope(oscillator: Oscillator): void {
-
     this.observeEditableState(oscillator);
     const amp = oscillator.getValue(AMP_KEY);
-
-    this.setAmpValue(Object.values(amp) as number[]);
+    this.amp = amp;
+    this.setAmpValue(Object.values(this.amp) as number[], true);
   }
 
   private observeEditableState(oscillator: Oscillator): void {
@@ -127,7 +157,7 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
     );
   }
 
-  private setAmpValue(ampValues: number[]): void {
+  private setAmpValue(ampValues: number[], padSustainWidth: boolean): void {
 
     const sustainWidth = AVAILABLE_DURATION - (ampValues.filter((amp, i) => i !== 2).reduce((a, b) => a + b));
 
@@ -140,7 +170,11 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
         this.points[i] = v * this.secondWidth;
       } else {
         totalDuration += sustainWidth;
-        this.sustainWidth =  sustainWidth * this.secondWidth;
+        if (padSustainWidth) {
+          this.sustainWidth =  sustainWidth * this.secondWidth;
+        }
+
+        this.points[2] = this.sustainWidth;
         this.cumulativePoints[i] = this.renderingHeight - (v * this.renderingHeight);
       }
     });
@@ -163,19 +197,19 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
     let curve = '';
     switch (curveType) {
       case(Curves.sin): {
-        curve =  `Q ${ this.PAD } ${ this.PAD }, `;
+        curve =  `Q ${ this.XPAD } ${ this.YPAD }, `;
         break;
       }
       case(Curves.exp): {
-        curve = `Q ${ this.PAD + this.cumulativePoints[0] } ${ this.lineBase }, `;
+        curve = `Q ${ this.XPAD + this.cumulativePoints[0] } ${ this.lineBase }, `;
         break;
       }
     }
 
     return [
-      `M ${this.PAD} ${ this.lineBase } `,
+      `M ${this.XPAD} ${ this.lineBase } `,
       curve,
-      `${this.PAD + this.cumulativePoints[0]} ${ this.PAD }`
+      `${this.XPAD + this.cumulativePoints[0]} ${ this.YPAD }`
     ].join('');
   }
 
@@ -184,43 +218,39 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
     let curve = '';
     switch (curveType) {
         case(Curves.sin): {
-          curve = `Q ${ this.PAD + this.cumulativePoints[1] } ${ this.PAD }, `;
+          curve = `Q ${ this.XPAD + this.cumulativePoints[1] } ${ this.YPAD }, `;
           break;
         }
         case(Curves.exp): {
-          curve = `Q ${ this.PAD + this.cumulativePoints[0] } ${ this.PAD + this.cumulativePoints[2] }, `;
+          curve = `Q ${ this.XPAD + this.cumulativePoints[0] } ${ this.YPAD + this.cumulativePoints[2] }, `;
         }
     }
 
     return [
-      `M ${this.PAD + this.cumulativePoints[0]} ${ this.PAD } `,
+      `M ${this.XPAD + this.cumulativePoints[0]} ${ this.YPAD } `,
       curve,
-      `${this.PAD + this.cumulativePoints[1]} ${ this.PAD + this.cumulativePoints[2] }`
+      `${this.XPAD + this.cumulativePoints[1]} ${ this.YPAD + this.cumulativePoints[2] }`
     ].join('');
   }
 
   getReleaseCurve(): string {
-    // return [
-    //   `M ${this.PAD + this.points[3]} ${ this.cumulativePoints[2] } `,
-    //   // curve,
-    //   `${this.PAD + this.cumulativePoints[1]} ${ this.PAD + this.cumulativePoints[2] }`
-    // ].join('');
-    return '';
+    const curveType = this.curveTypes[2];
+    let curve;
+    switch (curveType) {
+      case(Curves.sin): {
+        curve = `Q ${ this.XPAD + this.points[2] } ${ this.lineBase }, `;
+        break;
+      }
+      case(Curves.exp): {
+        curve = `Q ${ this.XPAD + this.cumulativePoints[3] } ${ this.YPAD + this.cumulativePoints[2] }, `;
+      }
+    }
+    return [
+      `M ${ this.XPAD + this.points[2] } ${ this.YPAD + this.cumulativePoints[2] } `,
+      curve,
+      `${ this.XPAD + this.cumulativePoints[3] } ${ this.lineBase }`
+    ].join('');
   }
-
-
-//   <line
-//   #decayLine
-//   [ngClass]="{'line-off' : !isEditable}"
-//   [attr.x1]="PAD + points[0]"
-//   [attr.y1]="PAD"
-//   [attr.x2]="PAD + points[1]"
-//   [attr.y2]="PAD + points[2]"
-//   stroke-linecap="round"
-//   stroke-width="3"
-//   stroke="white"
-// />
-
 
   @ViewChild('envelopeContainer') set envelopeContainerElem(e: any) {
     this.envelopeContainer = e.nativeElement;
@@ -228,6 +258,11 @@ export class AdsrEnvelopeComponent implements OnInit, AfterViewInit {
 
   @ViewChild('svgContainer') set svgContainerElem(e: any) {
     this.svgContainer = e.nativeElement;
+    this.svgPositions = this.svgContainer.getBoundingClientRect();
+  }
+
+  values(obj: any): any[] {
+    return Object.values(obj);
   }
 
 }

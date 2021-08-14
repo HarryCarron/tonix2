@@ -1,6 +1,4 @@
-* {
-  transition: opacity 0.5s;
-}
+
 
 .handle {
   cursor: pointer;
@@ -14,13 +12,10 @@
   opacity: 0.3;
 }
 .overview-container {
-  width: 10%;
+  width: 20%;
 }
 .envelope-container {
   width: 90%;
-}
-text {
-  font-family: monospace;
 }
 
 .line-overlay {

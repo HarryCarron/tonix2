@@ -8,6 +8,7 @@ import { KnobComponent } from './components/knob/knob.component';
 import { LedComponent } from './components/led/led.component';
 import { SettingsRackComponent } from './components/settings-rack/settings-rack.component';
 import { AdsrEnvelopeComponent } from './components/settings-rack/adsr-envelope/adsr-envelope.component';
+import { DragAndDropComponent } from './baseComponents/drag-and-drop/drag-and-drop.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { AdsrEnvelopeComponent } from './components/settings-rack/adsr-envelope/
     KnobComponent,
     LedComponent,
     SettingsRackComponent,
-    AdsrEnvelopeComponent
+    AdsrEnvelopeComponent,
+    DragAndDropComponent
   ],
   imports: [
     BrowserModule,

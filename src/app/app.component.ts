@@ -28,19 +28,19 @@ export class AppComponent implements OnInit {
         {
           number: oscNumber,
           wavetype: Wavetype.sine,
-          connected: oscNumber === 1,
+          connected: true,
           detune: 0,
           amp: {
             attack: r(),
             decay: r(),
-            sustain: 0.4,
+            sustain: 0.8,
             release: r()
           },
         }
       )
     );
 
-    timer(1000).subscribe(() => this.oscillatorGlobalService.setActiveOscillator((this.oscillators as Oscillator[])[0]));
+    this.oscillatorGlobalService.setActiveOscillator((this.oscillators as Oscillator[])[0]);
 
   }
 

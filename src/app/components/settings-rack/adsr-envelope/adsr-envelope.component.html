@@ -1,147 +1,180 @@
 <div class="w-100 h-100 d-flex" >
-  <!-- <div class="overview-container">
-    hey
-  </div> -->
+
   <div class="flex-1" #envelopeContainer>
     <svg #svgContainer>
 
-      <rect [attr.x]="PAD / 2" fill="#252c33" [attr.height]="availableHeight - (PAD / 2)" [attr.width]="availableWidth - (PAD)" rx="5" />
+      <rect [attr.x]="XPAD / 2" fill="#252c33" [attr.height]="availableHeight - (YPAD / 2)" [attr.width]="availableWidth - (XPAD)" rx="5" />
 
-      <text style="fill: #A9A9A9" [attr.y]="lineBase + 15" [attr.x]="PAD - 3">
+      <text style="fill: #A9A9A9" text-anchor="middle" [attr.y]="lineBase + 17" [attr.x]="XPAD">
         0
       </text>
 
+      <text style="fill: #A9A9A9" text-anchor="middle" [attr.y]="lineBase + 17" [attr.x]="XPAD + cumulativePoints[0]">
+        {{ values(amp)[0].toFixed(1) }}
+      </text>
+
+      <text style="fill: #A9A9A9" text-anchor="middle" [attr.y]="lineBase + 17" [attr.x]="XPAD + cumulativePoints[1]">
+        {{ (values(amp)[0] + values(amp)[1]).toFixed(1) }}
+      </text>
+
+      <!-- <text style="fill: #A9A9A9" text-anchor="middle" [attr.y]="lineBase + 17" [attr.x]="XPAD + cumulativePoints[2]">
+        {{ (values(amp)[0] + values(amp)[1] + values(amp)[2]).toFixed(1) }}
+      </text> -->
+
       <path
-        [ngClass]="{'line-off' : !isEditable}"
-        [attr.d]="getAttackCurve()"
-        stroke="white"
-        fill="transparent"
-        stroke-linecap="round"
-        stroke-width="3"
-        stroke="white"
-        class="line"
+      [ngClass]="{'line-off' : !isEditable}"
+      [attr.d]="getAttackCurve()"
+      stroke="white"
+      fill="transparent"
+      stroke-linecap="round"
+      stroke-width="3"
+      stroke="white"
+      [attr.stroke-width]="pathWidth"
+      class="line"
       />
 
       <path
-        [attr.d]="getAttackCurve()"
-        stroke="white"
-        fill="transparent"
-        stroke-linecap="round"
-        stroke-width="15"
-        stroke="#0074D9"
-        class="line"
-        (mouseenter)="hovered[0]=true"
-        (mouseleave)="hovered[0]=false"
-        [attr.stroke-opacity]="hovered[0] ? '0.4' : '0'"
-        (click)="toggleCurve(0)"
+      [attr.d]="getAttackCurve()"
+      stroke="white"
+      fill="transparent"
+      stroke-linecap="round"
+      stroke-width="15"
+      stroke="#0074D9"
+      class="line"
+      [attr.stroke-width]="pathWidth"
+      [attr.stroke-opacity]="hovered[0] ? '0.4' : '0'"
       />
 
       <path
-        [ngClass]="{'line-off' : !isEditable}"
-        [attr.d]="getDecayCurve()"
-        stroke="white"
-        fill="transparent"
-        stroke-linecap="round"
-        stroke-width="3"
-        stroke="white"
+      [ngClass]="{'line-off' : !isEditable}"
+      [attr.d]="getDecayCurve()"
+      stroke="white"
+      fill="transparent"
+      stroke-linecap="round"
+      [attr.stroke-width]="pathWidth"
+      stroke="white"
       />
 
       <path
-        [attr.d]="getDecayCurve()"
-        stroke="white"
-        fill="transparent"
-        stroke-linecap="round"
-        stroke-width="15"
-        stroke="#0074D9"
-        class="line"
-        (mouseenter)="hovered[1]=true"
-        (mouseleave)="hovered[1]=false"
-        [attr.stroke-opacity]="hovered[1] ? '0.4' : '0'"
-        (click)="toggleCurve(1)"
+      [attr.d]="getDecayCurve()"
+      stroke="white"
+      fill="transparent"
+      stroke-linecap="round"
+      stroke-width="15"
+      stroke="#0074D9"
+      class="line"
+      [attr.stroke-width]="pathWidth"
+      (mouseenter)="hovered[1]=true"
+      (mouseleave)="hovered[1]=false"
+      [attr.stroke-opacity]="hovered[1] ? '0.4' : '0'"
       />
 
 
       <line
-        #sustainLine
-        [ngClass]="{'line-off' : !isEditable}"
-        [attr.x1]="PAD + cumulativePoints[1]"
-        [attr.y1]="PAD + cumulativePoints[2]"
-        [attr.x2]="PAD + sustainWidth"
-        [attr.y2]="PAD + cumulativePoints[2]"
-        stroke-linecap="round"
-        stroke-width="3"
-        stroke="white"
+      [ngClass]="{'line-off' : !isEditable}"
+      [attr.x1]="XPAD + cumulativePoints[1]"
+      [attr.y1]="YPAD + cumulativePoints[2]"
+      [attr.x2]="XPAD + sustainWidth"
+      [attr.y2]="YPAD + cumulativePoints[2]"
+      stroke-linecap="round"
+      [attr.stroke-width]="pathWidth"
+      stroke="white"
       />
 
       <path
-        [ngClass]="{'line-off' : !isEditable}"
-        [attr.d]="getReleaseCurve()"
-        stroke="white"
-        fill="transparent"
-        stroke-linecap="round"
-        stroke-width="3"
-        stroke="white"
+      [ngClass]="{'line-off' : !isEditable}"
+      [attr.d]="getReleaseCurve()"
+      stroke="white"
+      fill="transparent"
+      stroke-linecap="round"
+      [attr.stroke-width]="pathWidth"
+      stroke="white"
       />
 
-    <circle
+      <path
+      [attr.d]="getReleaseCurve()"
+      stroke="white"
+      fill="transparent"
+      stroke-linecap="round"
+      stroke-width="15"
+      stroke="#0074D9"
+      [attr.stroke-width]="pathWidth"
+      class="line"
+      [attr.stroke-opacity]="hovered[2] ? '0.4' : '0'"
+      />
+
+      <circle
+      id="startHandle"
       [ngClass]="{'off' : !isEditable}"
-      #sustainHandle
-      [attr.cx]="PAD + cumulativePoints[1]"
-      [attr.cy]="PAD + cumulativePoints[2]"
-      [attr.r]="handleRadius"
-      stroke="#fffd47"
-      stroke-width="3"
-      class="handle"
-    />
-
-
-    <circle
-      *ngIf="isEditable"
-      #releaseHandle
-      [attr.cx]="PAD + sustainWidth"
-      [attr.cy]="PAD + cumulativePoints[2]"
-      [attr.r]="handleRadius"
-      stroke="#fffd47"
-      stroke-width="3"
-      stroke-fill="transparent"
-      class="handle"
-    />
-
-    <circle
-      [ngClass]="{'off' : !isEditable}"
-      #attackHandle
-      [attr.cx]="PAD"
+      [attr.cx]="XPAD"
       [attr.cy]="lineBase"
       [attr.r]="handleRadius"
       stroke="#fffd47"
       stroke-width="3"
       stroke-fill="transparent"
       class="handle"
-    />
+      />
 
-    <circle
+
+      <circle
+      id="attackHandle"
+      [ngClass]="{'off' : !isEditable}"
+      [attr.cx]="XPAD + cumulativePoints[0]"
+      [attr.cy]="YPAD"
+      [attr.r]="handleRadius"
+      stroke="#fffd47"
+      stroke-width="3"
+      stroke-fill="transparent"
+      class="handle"
+      (mousedown)="onDrag(0)"
+      />
+
+      <circle
+      id="decayHandle"
+      [ngClass]="{'off' : !isEditable}"
+      [attr.cx]="XPAD + cumulativePoints[1]"
+      [attr.cy]="YPAD + cumulativePoints[2]"
+      [attr.r]="handleRadius"
+      stroke="#fffd47"
+      stroke-width="3"
+      class="handle"
+      (mousedown)="onDrag(1)"
+      />
+
+      <circle
+      id="sustainReleaseHandle"
       *ngIf="isEditable"
-      [attr.cx]="PAD + cumulativePoints[3]"
+      [attr.cx]="XPAD + sustainWidth"
+      [attr.cy]="YPAD + cumulativePoints[2]"
+      [attr.r]="handleRadius"
+      stroke="#fffd47"
+      stroke-width="3"
+      stroke-fill="transparent"
+      class="handle"
+      (mousedown)="onDrag(2)"
+      />
+
+      <circle
+      id="releaseHandle"
+      *ngIf="isEditable"
+      [attr.cx]="XPAD + cumulativePoints[3]"
       [attr.cy]="lineBase"
       [attr.r]="handleRadius"
       stroke="#fffd47"
       stroke-width="3"
       stroke-fill="transparent"
       class="handle"
-    />
+      (mousedown)="onDrag(3)"
+      />
 
-    <circle
-      [ngClass]="{'off' : !isEditable}"
-      #decayHandle
-      [attr.cx]="PAD + cumulativePoints[0]"
-      [attr.cy]="PAD"
-      [attr.r]="handleRadius"
-      stroke="#fffd47"
-      stroke-width="3"
-      stroke-fill="transparent"
-      class="handle"
-    />
-  </svg>
+      <rect (click)="toggleCurve(0)" (mouseenter)="hovered[0]=true" (mouseleave)="hovered[0]=false" [attr.x]="XPAD" [attr.y]="YPAD" class="line-overlay" fill="transparent" [attr.height]="availableHeight - YPAD" [attr.width]="points[0]" rx="4" />
+      <rect (click)="toggleCurve(1)" (mouseenter)="hovered[1]=true" (mouseleave)="hovered[1]=false"  [attr.x]="XPAD + points[0]" [attr.y]="YPAD" class="line-overlay" fill="transparent" [attr.height]="availableHeight - YPAD" [attr.width]="points[1]" rx="4" />
+      <rect (click)="toggleCurve(2)" (mouseenter)="hovered[2]=true" (mouseleave)="hovered[2]=false" [attr.x]="XPAD + sustainWidth" [attr.y]="YPAD" class="line-overlay" fill="transparent" [attr.height]="availableHeight - YPAD" [attr.width]="XPAD + this.cumulativePoints[3]" rx="4" />
+
+    </svg>
   </div>
+<!-- <div class="overview-container">
+    hey
+  </div> -->
 </div>
 
